@@ -1,0 +1,26 @@
+services:
+    minecraft:
+      build: .
+      ports:
+        - "26656:25565"
+        - "26666:26666" # for rcon
+      volumes:
+        - "data:/data"
+        - "./server.properties:/data/server.properties"
+      environment:
+        EULA: "TRUE"
+      restart: always
+      labels:
+        - "--nogui"
+      networks:
+        - www
+    resources:
+        limits:
+            memory: 8G
+        reservations:
+            memory: 4G
+  
+  networks:
+    www:
+      external:
+        name: www

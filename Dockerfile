@@ -2,24 +2,33 @@ FROM ubuntu:latest
 
 WORKDIR /
 
-EXPOSE 25565 25565
+EXPOSE 25565 25565 25575
 
-# default url to start with
-ENV MEGA_URL=https://mega.nz/#!KBNRkCKZ!W9TcA2WWUWtAmfCQ1GTO2jPV_R3_IpfKeQI-C3wX5O8
-# min memory use for this modpack
-ENV INIT_MEM=4G
-# max mem that we should let java use
-ENV MAX_MEM=4G
+#define the volume
+VOLUME [ "/data" ]
 
 #update all the things
 RUN apt-get update -y
 #install the things
-RUN apt-get install unzip megatools openjdk-8-jre -y
-#startup script
+RUN apt-get install curl unzip megatools openjdk-8-jre -y
+
+# default url to start with
+ENV SERVER_URL=https://www.tekx.it/downloads/0.981Tekxit3Server.zip
+
+
+# download tekxit server
+RUN curl -so mc.zip ${SERVER_URL}
+RUN unzip mc.zip -d /data-temp
+
+# startup script
 COPY ./start.sh start.sh
-#make sure startup script can run
+# make sure startup script can run
 RUN chmod +x ./start.sh
-#define the volume
-VOLUME [ "/data" ]
+
+# min memory use for this modpack
+ENV INIT_MEM=4G
+# max mem that we should let java use
+ENV MAX_MEM=6G
+
 #execute startup script on startup
 ENTRYPOINT [ "./start.sh" ]
